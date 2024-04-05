@@ -22,49 +22,12 @@ func New(threshold Level, opts ...Option) *Logger {
 	return lgr
 }
 
-// DebugF formats and prints a message if the log level is debug or higher.
-func (l *Logger) Debugf(format string, args ...any) {
-	if l.threshold > LevelDebug {
+func (l *Logger) LogF(lvl Level, format string, args ...any) {
+	if l.threshold > lvl {
 		return
 	}
 
-	l.logf(LevelDebug, format, args...)
-}
-
-// Infof formats and prints a message if the log level is info or higher.
-func (l *Logger) Infof(format string, args ...any) {
-	if l.threshold > LevelInfo {
-		return
-	}
-
-	l.logf(LevelInfo, format, args...)
-}
-
-// Warnf formats and prints a message if the log level is warn or higher.
-func (l *Logger) Warnf(format string, args ...any) {
-	if l.threshold > LevelWarn {
-		return
-	}
-
-	l.logf(LevelWarn, format, args...)
-}
-
-// ErrorF formats and prints a message if the log level is error or higher.
-func (l *Logger) Errorf(format string, args ...any) {
-	if l.threshold > LevelError {
-		return
-	}
-
-	l.logf(LevelError, format, args...)
-}
-
-// Fatalf formats and prints a message if the log level is fatal or higher.
-func (l *Logger) Fatalf(format string, args ...any) {
-	if l.threshold > LevelFatal {
-		return
-	}
-
-	l.logf(LevelFatal, format, args...)
+	l.logf(lvl, format, args...)
 }
 
 // logf prints the message to the output.

@@ -10,9 +10,9 @@ import (
 func main() {
 	lgr := pocketlog.New(pocketlog.LevelInfo, pocketlog.WithOutput(os.Stdout))
 
-	lgr.Infof("A little copying is better than a little dependency.")
-	lgr.Errorf("Errors are values. Documentation is for %s.", "users")
-	lgr.Debugf("Make the zero (%d) value useful.", 0)
+	lgr.LogF(pocketlog.LevelInfo, "A little copying is better than a little dependency.")
+	lgr.LogF(pocketlog.LevelError, "Errors are values. Documentation is for %s.", "users")
+	lgr.LogF(pocketlog.LevelDebug, "Make the zero (%d) value useful.", 0)
 
-	lgr.Infof("Hallo, %d %v", 2024, time.Now())
+	lgr.LogF(pocketlog.LevelInfo, "Hallo, %d %v", 2024, time.Now())
 }
