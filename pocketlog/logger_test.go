@@ -23,6 +23,11 @@ const (
 	errorLevelMessage = "[ERROR] " + errorMessage
 )
 
+const (
+	large_limit = 1000
+	small_limit = 10
+)
+
 func TestLogger_DebugInfoErrorf(t *testing.T) {
 	type testCase struct {
 		level    pocketlog.Level
@@ -48,7 +53,7 @@ func TestLogger_DebugInfoErrorf(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			tw := &testWriter{}
 
-			testedLogger := pocketlog.New(tc.level, pocketlog.WithOutput(tw))
+			testedLogger := pocketlog.New(tc.level, pocketlog.WithOutput(tw, large_limit))
 
 			testedLogger.LogF(pocketlog.LevelDebug, debugMessage)
 			testedLogger.LogF(pocketlog.LevelInfo, infoMessage)
@@ -56,6 +61,48 @@ func TestLogger_DebugInfoErrorf(t *testing.T) {
 
 			if tw.contents != tc.expected {
 				t.Errorf("Invalid contents, expected \n%q, got \n%q", tc.expected, tw.contents)
+			}
+		})
+	}
+}
+
+func TestLogger_LogFCharLimit(t *testing.T) {
+	type testCase struct {
+		level    pocketlog.Level
+		expected string
+	}
+
+	debugExpected := "[DEBUG] " + debugMessage[:small_limit] + "[TRIMMED]\n"
+	infoExpected := "[INFO] " + infoMessage[:small_limit] + "[TRIMMED]\n"
+	errorExpected := "[ERROR] " + errorMessage[:small_limit] + "[TRIMMED]\n"
+
+	tt := map[string]testCase{
+		"debug": {
+			level:    pocketlog.LevelDebug,
+			expected: debugExpected + infoExpected + errorExpected,
+		},
+		"info": {
+			level:    pocketlog.LevelInfo,
+			expected: infoExpected + errorExpected,
+		},
+		"error": {
+			level:    pocketlog.LevelError,
+			expected: errorExpected,
+		},
+	}
+
+	for name, tc := range tt {
+		t.Run(name, func(t *testing.T) {
+			tw := &testWriter{}
+
+			testedLogger := pocketlog.New(tc.level, pocketlog.WithOutput(tw, small_limit))
+
+			testedLogger.LogF(pocketlog.LevelDebug, debugMessage)
+			testedLogger.LogF(pocketlog.LevelInfo, infoMessage)
+			testedLogger.LogF(pocketlog.LevelError, errorMessage)
+
+			if tw.contents != tc.expected {
+				t.Errorf("Invalid contents, \nexpected \n%q, \ngot \n%q", tc.expected, tw.contents)
 			}
 		})
 	}

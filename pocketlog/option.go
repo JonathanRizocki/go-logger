@@ -6,8 +6,9 @@ import "io"
 type Option func(*Logger)
 
 // WithOutput returns a configuration function that sets the output of logs.
-func WithOutput(output io.Writer) Option {
+func WithOutput(output io.Writer, maxChars uint) Option {
 	return func(lgr *Logger) {
 		lgr.output = output
+		lgr.maxChars = maxChars
 	}
 }
