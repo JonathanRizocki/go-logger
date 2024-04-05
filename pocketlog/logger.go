@@ -1,6 +1,7 @@
 package pocketlog
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"os"
@@ -35,14 +36,34 @@ func (l *Logger) LogF(lvl Level, format string, args ...any) {
 // Add decorations here, if any.
 func (l *Logger) logf(lvl Level, format string, args ...any) {
 
-	message := fmt.Sprintf(format, args...)
+	contents := fmt.Sprintf(format, args...)
 	//message = limitString(message, l.maxChars)
 
-	if l.maxChars != 0 && uint(len([]rune(message))) > l.maxChars {
-		message = string([]rune(message)[:l.maxChars]) + "[TRIMMED]"
+	// check the trimming is activated, and that we should apply it to this message
+	// checking the length in runes, as this won't print unexpected characters
+	if l.maxChars != 0 && uint(len([]rune(contents))) > l.maxChars {
+		contents = string([]rune(contents)[:l.maxChars]) + "[TRIMMED]"
 	}
 
-	_, _ = fmt.Fprintf(l.output, "%s %s\n", lvl, message)
+	msg := message{
+		Level:   lvl.String(),
+		Message: contents,
+	}
+
+	// encode the message
+	formattedMessage, err := json.Marshal(msg)
+	if err != nil {
+		_, _ = fmt.Fprintf(l.output, "unable to format message for %v\n", contents)
+		return
+	}
+
+	_, _ = fmt.Fprintln(l.output, string(formattedMessage))
+}
+
+// message represents the JSON structure of the logged messages
+type message struct {
+	Level   string `json:"level"`
+	Message string `json:"message"`
 }
 
 // // Function to limit the string to a certain number of characters

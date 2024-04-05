@@ -8,7 +8,7 @@ import (
 func ExampleLogger_Debugf() {
 	debugLogger := pocketlog.New(pocketlog.LevelDebug)
 	debugLogger.LogF(pocketlog.LevelDebug, "Hello, %s", "world")
-	// Output: [DEBUG] Hello, world
+	// Output: {"level":"[DEBUG]","message":"Hello, world"}
 }
 
 const (
@@ -18,9 +18,9 @@ const (
 )
 
 const (
-	debugLevelMessage = "[DEBUG] " + debugMessage
-	infoLevelMessage  = "[INFO] " + infoMessage
-	errorLevelMessage = "[ERROR] " + errorMessage
+	debugLevelMessage = "{\"level\":\"[DEBUG]\",\"message\":\"" + debugMessage + "\"}"
+	infoLevelMessage  = "{\"level\":\"[INFO]\",\"message\":\"" + infoMessage + "\"}"
+	errorLevelMessage = "{\"level\":\"[ERROR]\",\"message\":\"" + errorMessage + "\"}"
 )
 
 const (
@@ -72,9 +72,9 @@ func TestLogger_LogFCharLimit(t *testing.T) {
 		expected string
 	}
 
-	debugExpected := "[DEBUG] " + debugMessage[:small_limit] + "[TRIMMED]\n"
-	infoExpected := "[INFO] " + infoMessage[:small_limit] + "[TRIMMED]\n"
-	errorExpected := "[ERROR] " + errorMessage[:small_limit] + "[TRIMMED]\n"
+	debugExpected := "{\"level\":\"[DEBUG]\",\"message\":\"" + debugMessage[:small_limit] + "[TRIMMED]" + "\"}\n"
+	infoExpected := "{\"level\":\"[INFO]\",\"message\":\"" + infoMessage[:small_limit] + "[TRIMMED]" + "\"}\n"
+	errorExpected := "{\"level\":\"[ERROR]\",\"message\":\"" + errorMessage[:small_limit] + "[TRIMMED]" + "\"}\n"
 
 	tt := map[string]testCase{
 		"debug": {
