@@ -8,13 +8,19 @@ import (
 func ExampleLogger_Debugf() {
 	debugLogger := pocketlog.New(pocketlog.LevelDebug)
 	debugLogger.Debugf("Hello, %s", "world")
-	// Output: Hello, world
+	// Output: [DEBUG] Hello, world
 }
 
 const (
 	debugMessage = "Why write I still all one, ever the same"
 	infoMessage  = "And keep invention in a noted weed,"
 	errorMessage = "That every word doth almost tell my name,"
+)
+
+const (
+	debugLevelMessage = "[DEBUG] " + debugMessage
+	infoLevelMessage  = "[INFO] " + infoMessage
+	errorLevelMessage = "[ERROR] " + errorMessage
 )
 
 func TestLogger_DebugInfoErrorf(t *testing.T) {
@@ -26,15 +32,15 @@ func TestLogger_DebugInfoErrorf(t *testing.T) {
 	tt := map[string]testCase{
 		"debug": {
 			level:    pocketlog.LevelDebug,
-			expected: debugMessage + "\n" + infoMessage + "\n" + errorMessage + "\n",
+			expected: debugLevelMessage + "\n" + infoLevelMessage + "\n" + errorLevelMessage + "\n",
 		},
 		"info": {
 			level:    pocketlog.LevelInfo,
-			expected: infoMessage + "\n" + errorMessage + "\n",
+			expected: infoLevelMessage + "\n" + errorLevelMessage + "\n",
 		},
 		"error": {
 			level:    pocketlog.LevelError,
-			expected: errorMessage + "\n",
+			expected: errorLevelMessage + "\n",
 		},
 	}
 
@@ -49,7 +55,7 @@ func TestLogger_DebugInfoErrorf(t *testing.T) {
 			testedLogger.Errorf(errorMessage)
 
 			if tw.contents != tc.expected {
-				t.Errorf("Invalid contents, expected %q, got %q", tc.expected, tw.contents)
+				t.Errorf("Invalid contents, expected \n%q, got \n%q", tc.expected, tw.contents)
 			}
 		})
 	}

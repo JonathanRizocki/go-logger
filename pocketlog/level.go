@@ -15,3 +15,21 @@ const (
 	// LevelFatal represents an error that cannot be recovered from
 	LevelFatal
 )
+
+func (lvl Level) String() string {
+	switch lvl {
+	case LevelDebug:
+		return "[DEBUG]"
+	case LevelInfo:
+		return "[INFO]"
+	case LevelWarn:
+		return "[WARN]"
+	case LevelError:
+		return "[ERROR]"
+	case LevelFatal:
+		return "[FATAL]"
+	default:
+		// Should not happen
+		return ""
+	}
+}
